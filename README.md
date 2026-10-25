@@ -134,7 +134,7 @@ When updating an image in `progressive-delivery/canary-rollout.yaml`:
 
 **Shyam Singh**
 * GitHub: [@shyam-codeops](https://github.com/shyam-codeops)
-* Role: DevOps & DevSecOps Engineer
+* Role: DevOps Engineer
 
 ---
 
