@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: enterprise-platform
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Enterprise Production GitOps Project with Least-Privilege Guardrails
+  sourceRepos:
+    - "https://github.com/shyam-codeops/gitops-argocd-helm.git"
+    - "https://github.com/shyam-codeops/*"
+  destinations:
+    - namespace: "dev-apps"
+      server: "https://kubernetes.default.svc"
+    - namespace: "stage-apps"
+      server: "https://kubernetes.default.svc"
+    - namespace: "prod-apps"
+      server: "https://kubernetes.default.svc"
+  clusterResourceWhitelist:
+    - group: "networking.k8s.io"
+      kind: "IngressClass"
+    - group: "cert-manager.io"
+      kind: "ClusterIssuer"
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  syncWindows:
+    - kind: deny
+      schedule: "0 22 * * 5" # Deny deployments after 10 PM Friday
+      duration: "48h"
+      applications:
+        - "prod-*"
+      manualSync: true

@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+*.env
+*.secret.yaml
+kubeconfig
+*.key
+*.crt
+*.tgz
+charts/*.tgz
+.helm/
+*.tmp
+*.bak
+__pycache__/
+*.pyc

@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: multi-env-microservices
+  namespace: argocd
+spec:
+  generators:
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - env: dev
+                  namespace: dev-apps
+                  autoSync: true
+                - env: stage
+                  namespace: stage-apps
+                  autoSync: true
+                - env: prod
+                  namespace: prod-apps
+                  autoSync: false # Manual approval gate for production
+          - list:
+              elements:
+                - app: ecommerce-frontend
+                - app: payment-service
+  template:
+    metadata:
+      name: "{{env}}-{{app}}"
+      labels:
+        environment: "{{env}}"
+        app: "{{app}}"
+    spec:
+      project: enterprise-platform
+      source:
+        repoURL: "https://github.com/shyam-codeops/gitops-argocd-helm.git"
+        targetRevision: HEAD
+        path: "charts/app-template"
+        helm:
+          valueFiles:
+            - "../../apps/{{app}}/{{env}}/values.yaml"
+      destination:
+        server: "https://kubernetes.default.svc"
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: "{{autoSync}}"
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true

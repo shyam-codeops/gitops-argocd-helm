@@ -1,0 +1,32 @@
+appName: "ecommerce-frontend"
+environment: "dev"
+replicaCount: 1
+
+image:
+  repository: "ghcr.io/contoso/ecommerce-frontend"
+  tag: "dev-latest"
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: "dev.store.contoso.com"
+  tls:
+    enabled: true
+    secretName: "dev-frontend-tls"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false

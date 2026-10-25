@@ -1,0 +1,35 @@
+appName: "default-app"
+environment: "dev"
+replicaCount: 2
+
+image:
+  repository: "nginx"
+  tag: "1.25-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  host: "app.local"
+  tls:
+    enabled: true
+    secretName: "app-tls-secret"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPU: 75
